@@ -5,44 +5,39 @@ import java.awt.*;
 import java.io.File;
 
 public class TextEditor extends JFrame {
-    File currentFile;
+    private final FileManager fileManager;
     private final JTextArea textArea;
 
     public TextEditor() {
-        setTitle("Simple Text Editor");
+        setTitle("Plain text editor");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         textArea = new JTextArea();
+        fileManager = new FileManager(textArea);
+
         JScrollPane scrollPane = new JScrollPane(textArea);
-
         setJMenuBar(createMenuBar());
-
         add(scrollPane, BorderLayout.CENTER);
     }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-
         JMenu fileMenu = new JMenu("File");
         JMenuItem newFile = new JMenuItem("New");
-        JMenuItem open = new JMenuItem("Open");
+        JMenuItem open = new JMenuItem("Opening");
         JMenuItem save = new JMenuItem("Save");
 
         JMenu editMenu = new JMenu("Edit");
         JMenuItem cut = new JMenuItem("Cut");
         JMenuItem copy = new JMenuItem("Copy");
         JMenuItem paste = new JMenuItem("Paste");
-        JMenuItem findReplace = new JMenuItem("Find & Replace");
+        JMenuItem findReplace = new JMenuItem("Search and replace");
 
-
-        editMenu.addSeparator();
-        editMenu.add(findReplace);
-
-        newFile.addActionListener(e -> FileManager.newFile(this, textArea));
-        open.addActionListener(e -> FileManager.openFile(this, textArea));
-        save.addActionListener(e -> FileManager.saveFile(this, textArea));
+        newFile.addActionListener(e -> fileManager.newFile());
+        open.addActionListener(e -> fileManager.openFile());
+        save.addActionListener(e -> fileManager.saveFile());
 
         cut.addActionListener(e -> ActionHandlers.cut(textArea));
         copy.addActionListener(e -> ActionHandlers.copy(textArea));
@@ -52,7 +47,6 @@ public class TextEditor extends JFrame {
             dialog.setVisible(true);
         });
 
-
         fileMenu.add(newFile);
         fileMenu.addSeparator();
         fileMenu.add(open);
@@ -61,10 +55,19 @@ public class TextEditor extends JFrame {
         editMenu.add(cut);
         editMenu.add(copy);
         editMenu.add(paste);
+        editMenu.addSeparator();
+        editMenu.add(findReplace);
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
 
         return menuBar;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            TextEditor editor = new TextEditor();
+            editor.setVisible(true);
+        });
     }
 }
